@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  api:
+    build: ./api
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - FRONTEND_URL=http://localhost:3000
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    command: npm run dev
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    environment:
+      - REACT_APP_API_URL=http://localhost:3001
+    depends_on:
+      - api
+
+networks:
+  default:
+    driver: bridge
