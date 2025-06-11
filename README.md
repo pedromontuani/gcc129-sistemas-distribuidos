@@ -87,11 +87,6 @@ A full-stack application with Express.js TypeScript backend and React frontend, 
 
 ## API Endpoints
 
-- `GET /health` - Health check
-- `GET /api/users` - Get all users
-- `GET /api/users/:id` - Get user by ID
-- `POST /api/users` - Create new user
-- `DELETE /api/users/:id` - Delete user
 
 ## Environment Variables
 
