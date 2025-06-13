@@ -1,51 +1,78 @@
-import { Router } from "express";
-import { PassThrough } from 'stream';
-import { getCategories, getCategorizers, getTags } from "../services/Imagga";
+import {Router} from "express";
+import {getCategories, getCategorizers, getTags} from "../services/Imagga";
 import Multer from '../middlewares/Multer';
-import fs from 'fs';
+import {deleteFile} from "../helpers/FileHelpers";
+import {getExifData, getGpsLatLong} from "../helpers/ImageHelper";
+
 const router = Router();
 
 
 router.post("/image-tags", Multer.single('image'), async (req, res) => {
-    const { file } = req;
+    const {file} = req;
 
     if (!file) {
-        return res.status(400).json({ error: "Image stream is required" });
+        res.status(400).json({error: "Image is required"});
+        return;
     }
 
     try {
         const response = await getTags(file);
-        res.status(200).send(response.data);
+        res.status(200).json(response.data);
     } catch (error) {
         console.error("Error fetching image tags:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({error: "Internal Server Error"});
     }
 });
 
-router.get("/image-categorizers", async (req, res) => {
+router.get("/categorizers", async (_, res) => {
     try {
         const response = await getCategorizers();
         res.json(response.data);
     } catch (error) {
         console.error("Error fetching image categorizers:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({error: "Internal Server Error"});
     }
 });
 
-router.post("/image-categorizer", async (req, res) => {
-    const { categorizerId, imageStream } = req.body;
+router.post("/image-categories", Multer.single('image'), async (req, res) => {
+    const {file} = req;
+    const {categorizerId} = req.body;
 
-    if (!categorizerId || !imageStream) {
-        return res.status(400).json({ error: "Categorizer ID and image stream are required" });
+    if (!file) {
+        res.status(400).json({error: "Image is required"});
+        return;
     }
 
     try {
-        const response = await getCategories(categorizerId, imageStream);
+        const response = await getCategories(file, categorizerId);
         res.json(response.data);
     } catch (error) {
         console.error("Error fetching image categories:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({error: "Internal Server Error"});
     }
 });
+
+router.get("/image-exif", Multer.single('image'), async (req, res) => {
+    const {file} = req;
+
+    if (!file) {
+        res.status(400).json({error: "Image is required"});
+        return;
+    }
+
+    try {
+        const data = await getExifData(file.path);
+
+        res.status(200).json({
+            coordinates: getGpsLatLong(data),
+        });
+    } catch (error) {
+        console.error("Error fetching image EXIF data:", error);
+        res.status(500).json({error: "Internal Server Error"});
+    } finally {
+        await deleteFile(file.path);
+    }
+
+})
 
 export default router;
