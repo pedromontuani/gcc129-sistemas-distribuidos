@@ -1,13 +1,11 @@
-import express from "express"
-import cors from "cors"
-import helmet from "helmet"
-import morgan from "morgan"
+import express, { Request, Response } from "express";
+import cors from "cors";
+import helmet from "helmet";
+import morgan from "morgan";
+import TestController from "./controllers/Test";
+import { PORT } from "./config/env";
 
-import TestController from "./controllers/Test"
-import { PORT } from "./config/env"
-
-const app = express()
-
+const app = express();
 
 // Middleware
 app.use(helmet())
@@ -19,10 +17,12 @@ app.use(
   }),
 )
 app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
-
+app.use(express.urlencoded({ extended: true }));
 app.use('/test', TestController);
+
+app.get("/health", (_req: Request, res: Response) => {
+  res.sendStatus(200);
+});
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`)
