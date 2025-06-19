@@ -14,14 +14,30 @@ services:
       - /app/node_modules
     command: npm run dev
 
+  summarizer:
+    build: ./summarizer
+    ports:
+      - "3002:3001"  # Porta 3002 do HOST para 3001 do CONTAINER
+    environment:
+      - NODE_ENV=development
+      - PORT=3001     # O app roda na 3001 DENTRO do container, mas fora é 3002
+      - OPENROUTER_API_URL=https://openrouter.ai/api/v1/chat/completions
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+    volumes:
+      - ./summarizer:/app
+      - /app/node_modules
+    command: npm run dev
+
   frontend:
     build: ./frontend
     ports:
       - "3000:80"
     environment:
       - REACT_APP_API_URL=http://localhost:3001
+      - REACT_APP_SUMMARIZER_URL=http://localhost:3002
     depends_on:
       - api
+      - summarizer
 
 networks:
   default:

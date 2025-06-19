@@ -6,23 +6,23 @@ import {getExifData, getGpsLatLong} from "../helpers/ImageHelper";
 
 const router = Router();
 
-
 router.post("/image-tags", Multer.single('image'), async (req, res) => {
-    const {file} = req;
-
+    const { file } = req;
     if (!file) {
-        res.status(400).json({error: "Image is required"});
+        res.status(400).json({ error: "Image is required" });
         return;
     }
-
     try {
         const response = await getTags(file);
-        res.status(200).json(response.data);
+        const tags = response.data.result.tags.map((tag: any) => tag.tag.en);
+        res.status(200).json({ tags }); 
     } catch (error) {
-        console.error("Error fetching image tags:", error);
-        res.status(500).json({error: "Internal Server Error"});
+        res.status(500).json({ error: "Internal Server Error" });
+    } finally {
+        if (file) await deleteFile(file.path);
     }
 });
+
 
 router.get("/categorizers", async (_, res) => {
     try {
@@ -52,7 +52,7 @@ router.post("/image-categories", Multer.single('image'), async (req, res) => {
     }
 });
 
-router.get("/image-exif", Multer.single('image'), async (req, res) => {
+router.post("/image-exif", Multer.single('image'), async (req, res) => {
     const {file} = req;
 
     if (!file) {
@@ -72,7 +72,6 @@ router.get("/image-exif", Multer.single('image'), async (req, res) => {
     } finally {
         await deleteFile(file.path);
     }
-
-})
+});
 
 export default router;

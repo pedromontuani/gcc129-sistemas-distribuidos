@@ -1,22 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: express-api
+  name: api-deployment
   labels:
-    app: express-api
+    app: api
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      app: express-api
+      app: api
   template:
     metadata:
       labels:
-        app: express-api
+        app: api
     spec:
       containers:
-      - name: express-api
-        image: express-api:latest
+      - name: api
+        image: api:latest
+        imagePullPolicy: Never      
         ports:
         - containerPort: 3001
         env:
@@ -26,6 +27,12 @@ spec:
           value: "production"
         - name: FRONTEND_URL
           value: "http://localhost:3000"
+        - name: IMAGGA_API_URL
+          value: "https://api.imagga.com/v2"
+        - name: IMAGGA_API_KEY
+          value: "acc_87a8e267dca7d66"
+        - name: IMAGGA_API_SECRET
+          value: "a8be58d344ca522df7ee09799e95382e"
         resources:
           requests:
             memory: "128Mi"
@@ -49,12 +56,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: express-api-service
+  name: api
 spec:
   selector:
-    app: express-api
+    app: api
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 3001
-  type: ClusterIP
+      port: 3001         # Porta interna do serviço (ClusterIP)
+      targetPort: 3001   # Porta do container
+      nodePort: 30001    # Porta do host para acesso externo
+  type: NodePort         # Expondo via NodePort
