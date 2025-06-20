@@ -2,9 +2,7 @@ import express, {Request, Response} from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-
-import MainController from "./controllers";
-
+import TestController from "./controllers/Location";
 import {PORT} from "./config/env";
 
 const app = express();
@@ -21,7 +19,7 @@ app.use(
 app.use(express.json())
 app.use(express.urlencoded({extended: true}));
 
-app.use('/', MainController);
+app.use('/location', TestController);
 
 app.get("/health", (_req: Request, res: Response) => {
     res.sendStatus(200);

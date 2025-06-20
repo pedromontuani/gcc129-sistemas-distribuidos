@@ -3,7 +3,6 @@ import dotenv from "dotenv"
 dotenv.config()
 
 export const PORT = process.env.PORT || 3000;
-export const IMAGGA_API_URL = process.env.IMAGGA_API_URL || "https://api.magga.ai/v1";
-export const IMAGGA_API_KEY = process.env.IMAGGA_API_KEY || "default_api_key";
-export const IMAGGA_API_SECRET = process.env.IMAGGA_API_SECRET
-    || "default_api_secret";
+export const GEOLOCATION_API_URL = process.env.GEOLOCATION_API_URL || "http://localhost:8080";
+export const IMAGE_PROCESSING_API_URL = process.env.IMAGE_PROCESSOR_URL || "http://localhost:8081";
+export const TEXT_PROCESSING_API_URL = process.env.TEXT_PROCESSOR_URL || "http://localhost:8082";
