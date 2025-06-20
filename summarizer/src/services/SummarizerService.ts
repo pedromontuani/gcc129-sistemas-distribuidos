@@ -1,11 +1,10 @@
 import axios from "axios";
-import {OPENROUTER_API_KEY, OPENROUTER_API_URL} from "../config/env";
+import {LLM_MODEL, LLM_URL} from "../config/env";
 import {ImageData} from "../types/Image";
 
 const api = axios.create({
-    baseURL: OPENROUTER_API_URL,
+    baseURL: LLM_URL,
     headers: {
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
     }
 });
@@ -23,22 +22,9 @@ export const summarizeText = async (imageData: ImageData[]): Promise<string> => 
             the image. Generate only the report, with no introduction or extra comments. 
             Start directly with the report content.`;
 
-        const body = {
-            model: "meta-llama/llama-3-70b-instruct",
-            messages: [
-                {
-                    role: "system",
-                    content: "Você é um especialista em laudos de imagens para pessoas com deficiência visual."
-                },
-                {role: "user", content: prompt},
-            ],
-            max_tokens: 512,
-            temperature: 0.7,
-        };
-
         const hfResponse = await api.post(
-            '/',
-            body,
+            '/api/generate',
+            {model: LLM_MODEL, prompt},
         );
 
         return hfResponse.data?.choices?.[0]?.message?.content || "Não foi possível gerar relatório.";
