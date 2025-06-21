@@ -8,18 +8,37 @@
 import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Header from './components/header/Header.tsx';
+import DateContextProvider from './contexts/dateContext/DateContext.tsx';
+import Content from './components/content/Content.tsx';
+import { useCallback, useLayoutEffect, useState } from 'react';
+import { init as initializeDb } from './lib/NitroSqlite.ts';
 
 function App() {
+  const [isReady, setReady] = useState(false);
   const isDarkMode = useColorScheme() === 'dark';
 
-  return (
-    <SafeAreaProvider style={styles.container}>
-      <StatusBar
-        backgroundColor="#D6D1E6"
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-      />
-      <Header />
-    </SafeAreaProvider>
+  const init = useCallback(async () => {
+    await initializeDb();
+    setReady(true);
+  }, []);
+
+  useLayoutEffect(() => {
+    init();
+  }, [init]);
+
+  return isReady ? (
+    <DateContextProvider>
+      <SafeAreaProvider style={styles.container}>
+        <StatusBar
+          backgroundColor="#D6D1E6"
+          barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        />
+        <Header />
+        <Content />
+      </SafeAreaProvider>
+    </DateContextProvider>
+  ) : (
+    <></>
   );
 }
 

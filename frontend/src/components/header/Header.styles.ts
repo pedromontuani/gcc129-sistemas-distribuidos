@@ -4,6 +4,8 @@ export default StyleSheet.create({
   container: {
     alignItems: 'stretch',
     backgroundColor: '#D6D1E6',
+    paddingBottom: 16,
+    rowGap: 12,
   },
   title: {
     fontSize: 20,
