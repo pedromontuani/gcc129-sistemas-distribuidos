@@ -1,9 +1,17 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import {
+  Animated,
+  Easing,
   FlatList,
   ListRenderItem,
-  Text,
   TouchableOpacity,
+  useAnimatedValue,
   View,
 } from 'react-native';
 
@@ -19,6 +27,13 @@ interface Props {
 const DatesList_: React.FC<Props> = ({ currentDate, onDateChange }) => {
   const flatListRef = React.useRef<FlatList<Number>>(null);
 
+  const today = useRef(new Date()).current;
+  const isCurrentMonth =
+    currentDate.getMonth() === today.getMonth() &&
+    currentDate.getFullYear() === today.getFullYear();
+  const isNextDisabled =
+    isCurrentMonth && today.getDate() === currentDate.getDate();
+
   const datesList = useMemo(() => {
     const daysInMonth = new Date(
       currentDate.getFullYear(),
@@ -26,8 +41,22 @@ const DatesList_: React.FC<Props> = ({ currentDate, onDateChange }) => {
       0,
     ).getDate();
 
-    return new Array(daysInMonth).fill(null).map((_, index) => index + 1);
-  }, [currentDate]);
+    const dates = new Array(daysInMonth).fill(null).map((_, index) => {
+      const date = new Date(currentDate);
+      date.setDate(index + 1);
+      return date;
+    });
+
+    return dates
+      .filter(date => {
+        if (isCurrentMonth) {
+          return date.getDate() <= today.getDate();
+        }
+
+        return date;
+      })
+      .map(i => i.getDate());
+  }, [currentDate, isCurrentMonth, today]);
 
   const currentIndex = useMemo(() => {
     return currentDate.getDate() - 1; // Adjust for zero-based index
@@ -46,15 +75,11 @@ const DatesList_: React.FC<Props> = ({ currentDate, onDateChange }) => {
     const isSelected = index === currentIndex;
 
     return (
-      <TouchableOpacity onPress={() => onPressDate(index + 1)}>
-        <View style={styles.dateContainer}>
-          <Text
-            style={[styles.dateText, isSelected && styles.selectedDateText]}
-          >
-            {item.toString()}
-          </Text>
-        </View>
-      </TouchableOpacity>
+      <Item
+        isSelected={isSelected}
+        item={item}
+        onPress={() => onPressDate(index + 1)}
+      />
     );
   };
 
@@ -92,8 +117,12 @@ const DatesList_: React.FC<Props> = ({ currentDate, onDateChange }) => {
           extraData={currentIndex}
         />
         <TouchableOpacity
-          style={styles.chevronTouchable}
+          style={[
+            styles.chevronTouchable,
+            isNextDisabled && styles.chevronDisabled,
+          ]}
           onPress={() => onPressDate(currentIndex + 2)}
+          disabled={isNextDisabled}
         >
           <Chevron style={[styles.chevron]} />
         </TouchableOpacity>
@@ -102,6 +131,43 @@ const DatesList_: React.FC<Props> = ({ currentDate, onDateChange }) => {
     </View>
   );
 };
+
+interface ItemProps {
+  isSelected: boolean;
+  onPress: () => void;
+  item: Number;
+}
+
+const Item = React.memo(({ isSelected, onPress, item }: ItemProps) => {
+  const scaleAnimation = useAnimatedValue(1);
+
+  useLayoutEffect(() => {
+    Animated.timing(scaleAnimation, {
+      toValue: isSelected ? 1.3 : 1,
+      duration: 200,
+      easing: Easing.inOut(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }, [isSelected, scaleAnimation]);
+
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <View style={styles.dateContainer}>
+        <Animated.Text
+          style={[
+            styles.dateText,
+            isSelected && styles.selectedDateText,
+            {
+              transform: [{ scale: scaleAnimation }],
+            },
+          ]}
+        >
+          {item.toString()}
+        </Animated.Text>
+      </View>
+    </TouchableOpacity>
+  );
+});
 
 const DatesList = React.memo(DatesList_);
 

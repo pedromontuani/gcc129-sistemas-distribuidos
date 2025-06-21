@@ -52,4 +52,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  chevronDisabled: {
+    opacity: 0,
+  },
 });
