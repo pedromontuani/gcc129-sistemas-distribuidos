@@ -15,9 +15,10 @@ router.post('/process-image', Multer.single('image'), async (req, res) => {
     }
 
     try {
-        const response = await getTags(file);
-        const tags = response.data.result.tags.map((tag: any) => tag.tag.en);
-        const categories = await getCategories(file);
+        const tagsResponse = await getTags(file);
+        const tags = tagsResponse.data.result.tags.map((tag: any) => tag.tag.en);
+        const categoriesResponse = await getCategories(file);
+        const categories = categoriesResponse.data.result.categories.map((cat: any) => cat.name.en);
         const exifData = await getExifData(file.path);
         const coordinates = getGpsLatLong(exifData);
         const timestamp = exifData.DateTimeOriginal || exifData.DateTime || null;
