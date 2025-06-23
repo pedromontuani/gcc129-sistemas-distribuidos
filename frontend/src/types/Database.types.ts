@@ -1,11 +1,11 @@
 export interface DiaryEntry {
-  id: string;
+  id: number;
   date: Date;
   description: string;
 }
 
 export interface DiaryImage {
-  id: string;
+  id: number;
   uri: string; // Image URI
   diaryId: string; // Reference to the diary entry
 }

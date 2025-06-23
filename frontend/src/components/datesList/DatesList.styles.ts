@@ -1,6 +1,12 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+export const getFlatlistStyle = (screenWidth: number) => {
+  return StyleSheet.create({
+    contentContainer: {
+      paddingHorizontal: screenWidth / 2 - 64,
+    },
+  }).contentContainer;
+};
 
 export default StyleSheet.create({
   container: {
@@ -28,9 +34,6 @@ export default StyleSheet.create({
   },
   flatlist: {
     flex: 1,
-  },
-  contentContainer: {
-    paddingHorizontal: SCREEN_WIDTH / 2 - 64,
   },
   dot: {
     width: 4,

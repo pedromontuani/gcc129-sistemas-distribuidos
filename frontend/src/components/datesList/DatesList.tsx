@@ -12,12 +12,13 @@ import {
   ListRenderItem,
   TouchableOpacity,
   useAnimatedValue,
+  useWindowDimensions,
   View,
 } from 'react-native';
 
 import Chevron from '../../assets/chevron.svg';
 
-import styles from './DatesList.styles';
+import styles, { getFlatlistStyle } from './DatesList.styles';
 
 interface Props {
   currentDate: Date;
@@ -26,6 +27,7 @@ interface Props {
 
 const DatesList_: React.FC<Props> = ({ currentDate, onDateChange }) => {
   const flatListRef = React.useRef<FlatList<Number>>(null);
+  const screenWidth = useWindowDimensions().width;
 
   const today = useRef(new Date()).current;
   const isCurrentMonth =
@@ -88,7 +90,7 @@ const DatesList_: React.FC<Props> = ({ currentDate, onDateChange }) => {
       index: currentIndex,
       animated: true,
     });
-  }, [currentIndex]);
+  }, [currentIndex, screenWidth]);
 
   return (
     <View style={styles.container}>
@@ -96,6 +98,7 @@ const DatesList_: React.FC<Props> = ({ currentDate, onDateChange }) => {
         <TouchableOpacity
           style={styles.chevronTouchable}
           onPress={() => onPressDate(currentIndex)}
+          hitSlop={5}
         >
           <Chevron style={[styles.chevron, styles.chevronLeft]} />
         </TouchableOpacity>
@@ -107,13 +110,15 @@ const DatesList_: React.FC<Props> = ({ currentDate, onDateChange }) => {
           renderItem={renderItem}
           keyExtractor={item => item.toString()}
           style={styles.flatlist}
-          contentContainerStyle={styles.contentContainer}
+          contentContainerStyle={getFlatlistStyle(screenWidth)}
           initialScrollIndex={currentIndex}
           getItemLayout={(data, index) => ({
             length: 40, // Height of each item
             offset: 40 * index, // Height of each item multiplied by the index
             index,
           })}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           extraData={currentIndex}
         />
         <TouchableOpacity
@@ -123,6 +128,7 @@ const DatesList_: React.FC<Props> = ({ currentDate, onDateChange }) => {
           ]}
           onPress={() => onPressDate(currentIndex + 2)}
           disabled={isNextDisabled}
+          hitSlop={5}
         >
           <Chevron style={[styles.chevron]} />
         </TouchableOpacity>
