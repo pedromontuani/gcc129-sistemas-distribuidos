@@ -16,7 +16,7 @@ export const getTags = async (image: Express.Multer.File) => {
     const formData = new FormData();
     formData.append('image_base64', await toBase64(image.path));
 
-    return api.post<void, AxiosResponse<TagsResponse>>('/tags', formData);
+    return api.post<TagsResponse>('/tags', formData);
 };
 
 export const getCategorizers = async () => {
@@ -27,5 +27,5 @@ export const getCategories = async (image: Express.Multer.File, categorizerId: s
     const formData = new FormData();
     formData.append('image_base64', await toBase64(image.path));
 
-    return api.post<FormData, AxiosResponse<CategoriesResponse>>(`/categories/${categorizerId}`, formData);
+    return api.post<CategoriesResponse>(`/categories/${categorizerId}`, formData);
 }
