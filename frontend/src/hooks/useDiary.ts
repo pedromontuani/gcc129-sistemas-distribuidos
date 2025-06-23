@@ -68,6 +68,8 @@ const useDiary = () => {
     [],
   );
 
+  const getImagesDescription = useCallback((images: string) => {}, []);
+
   const createEntry = async (
     date: Date,
     images: string[],
