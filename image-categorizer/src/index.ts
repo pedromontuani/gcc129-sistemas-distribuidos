@@ -22,7 +22,7 @@ app.use(
 app.use(express.json())
 app.use(express.urlencoded({extended: true}));
 
-app.use('/', MainController);
+app.use('/process-image', MainController);
 app.use('/test', TestController);
 
 app.get("/health", (_req: Request, res: Response) => {

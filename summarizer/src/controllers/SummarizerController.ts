@@ -110,7 +110,7 @@ const router = Router();
 // });
 
 
-router.post('/generate-report', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
     const data: ImageData[] = req.body;
 
     if (!Array.isArray(data) || data.length === 0) {

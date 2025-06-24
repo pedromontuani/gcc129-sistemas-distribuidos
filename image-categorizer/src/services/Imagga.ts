@@ -12,7 +12,7 @@ const api = axios.create({
 });
 
 
-export const getTags = async (image: Express.Multer.File) => {
+export const getTags = async (image: { path: string }) => {
     const formData = new FormData();
     formData.append('image_base64', await toBase64(image.path));
 
@@ -23,7 +23,7 @@ export const getCategorizers = async () => {
     return api.get<void, AxiosResponse<CategorizersResponse>>('/categorizers');
 }
 
-export const getCategories = async (image: Express.Multer.File, categorizerId: string = 'personal_photos') => {
+export const getCategories = async (image: { path: string }, categorizerId: string = 'personal_photos') => {
     const formData = new FormData();
     formData.append('image_base64', await toBase64(image.path));
 
