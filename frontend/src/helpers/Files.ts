@@ -22,3 +22,9 @@ export const deleteFile = async (fileUri: string) => {
     throw error;
   }
 };
+
+export const generateRandomFileName = (extension: string = 'jpg') => {
+  const randomStr = Math.random().toString(36).substring(2, 10);
+  const timestamp = Date.now();
+  return `img_${timestamp}_${randomStr}.${extension}`;
+};

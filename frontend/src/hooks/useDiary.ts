@@ -3,6 +3,7 @@ import { DateContext } from '../contexts/DateContext.tsx';
 import NitroSqlite from '../lib/NitroSqlite.ts';
 import { DiaryEntry, DiaryImage } from '../types/Database.types.ts';
 import { Entry } from '../types/Diary.types.ts';
+import { generateReport } from '../service/api.ts';
 import { deleteFile } from '../helpers/Files.ts';
 
 const useDiary = () => {
@@ -58,29 +59,35 @@ const useDiary = () => {
 
   const saveImagesForEntry = useCallback(
     async (images: string[], entryId: number) => {
+      console.log('images', images);
       const batch = images.map(image => ({
         query: 'INSERT INTO diary_images (uri, diary_id) VALUES (?, ?)',
         params: [image, entryId],
       }));
+
+      console.log('batch', batch);
 
       await NitroSqlite.executeBatchAsync(batch);
     },
     [],
   );
 
-  const getImagesDescription = useCallback((images: string) => {}, []);
+  const getImagesDescription = useCallback(async (images: string[]) => {
+    const { data } = await generateReport(images);
+    console.log('data', data);
 
-  const createEntry = async (
-    date: Date,
-    images: string[],
-    description: string,
-  ) => {
+    return data;
+  }, []);
+
+  const createEntry = async (date: Date, images: string[]) => {
+    // const { summary } = await getImagesDescription(images);
+
     const result = await getEntryByDate(date);
 
     if (!result) {
       const entry = await NitroSqlite.executeAsync(
         'INSERT INTO diary (date_time, description) VALUES (?, ?)',
-        [date.toDateString(), description],
+        [date.toDateString(), 'teste'],
       );
       const id = entry.insertId;
       await saveImagesForEntry(images, id!);
@@ -88,7 +95,7 @@ const useDiary = () => {
       const id = result.id;
       await NitroSqlite.executeAsync(
         'UPDATE diary SET description = ? WHERE id = ?',
-        [description, id],
+        ['teste', id],
       );
       const imagesResult = await getImagesByEntryId(id);
       await Promise.all(
