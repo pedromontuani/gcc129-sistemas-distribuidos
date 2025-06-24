@@ -54,8 +54,11 @@ export default StyleSheet.create({
   contentContainer: {
     gap: 8,
   },
+  columnContainer: {
+    gap: 8,
+  },
   image: {
-    width: '100%',
+    flex: 1,
     height: 120,
     borderRadius: 8,
   },
