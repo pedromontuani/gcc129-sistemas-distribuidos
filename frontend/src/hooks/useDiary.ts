@@ -80,14 +80,14 @@ const useDiary = () => {
   }, []);
 
   const createEntry = async (date: Date, images: string[]) => {
-    // const { summary } = await getImagesDescription(images);
+    const { summary } = await getImagesDescription(images);
 
     const result = await getEntryByDate(date);
 
     if (!result) {
       const entry = await NitroSqlite.executeAsync(
         'INSERT INTO diary (date_time, description) VALUES (?, ?)',
-        [date.toDateString(), 'teste'],
+        [date.toDateString(), summary],
       );
       const id = entry.insertId;
       await saveImagesForEntry(images, id!);
@@ -95,7 +95,7 @@ const useDiary = () => {
       const id = result.id;
       await NitroSqlite.executeAsync(
         'UPDATE diary SET description = ? WHERE id = ?',
-        ['teste', id],
+        [summary, id],
       );
       const imagesResult = await getImagesByEntryId(id);
       await Promise.all(
