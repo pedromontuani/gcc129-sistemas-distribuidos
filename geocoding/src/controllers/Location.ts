@@ -6,7 +6,7 @@ const router = Router();
 router.get("/query", async (req, res) => {
     try {
         const {latitude, longitude} = req.query;
-        const response = getLocationByCoordinates(String(latitude), String(longitude));
+        const response = await getLocationByCoordinates(String(latitude), String(longitude));
         res.status(200).json(response);
     } catch (error) {
         console.error("Error searching for location:", error);

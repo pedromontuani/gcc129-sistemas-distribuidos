@@ -8,7 +8,7 @@ const api = axios.create({
 });
 
 export const processImages = async (imageData: ImageData[]) => {
-    const {data}: { data: ImageData[] } = await api.post('/process-images', imageData);
+    const {data}: { data: ImageData[] } = await api.post('/summarize', imageData);
 
     return data;
 }

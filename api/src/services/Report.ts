@@ -4,25 +4,35 @@ import {ImageData} from "../types/Image";
 import {LocationResponse} from "../types/Location";
 import {processImages} from "./TextProcessor";
 
-const formatAddres = (location: LocationResponse) => {
-    const {address: {road, village, state, country}} = location;
-    return `${road} ${village}, ${state}, ${country}`;
+const formatAddress = (location: LocationResponse) => {
+    const {address} = location;
+    const {road, state, country} = address ?? {};
+    return `${road}, ${state}, ${country}`;
 }
 
 export const generateReport = async (imagePaths: string[]) => {
-    const imagesRequests = imagePaths.map(processImage);
+    const imageProcessingResponses = [];
 
-    const imageProcessingResponses = await Promise.all(imagesRequests);
-    const coordinates = imageProcessingResponses.map(response => (
-        response.coordinates
-    ));
+    for await (const path of imagePaths) {
+        const result = await processImage(path);
+        if (result) {
+            imageProcessingResponses.push(result);
+        }
+    }
 
-    const addressesRequests = coordinates.map(({lat, lng}) => getLocationByCoordinates(lat, lng));
+    const addressesRequests = imageProcessingResponses.map(response => {
+        const {coordinates} = response;
+        if (!!coordinates?.lng && !!coordinates?.lat) {
+            return getLocationByCoordinates(coordinates.lat, coordinates.lng)
+        }
+        return null;
+    })
+
     const locationResponses = await Promise.all(addressesRequests);
 
     const formattedImages: ImageData[] = imageProcessingResponses.map((image, index) => ({
         ...image,
-        address: formatAddres(locationResponses[index]),
+        address: locationResponses?.[index] ? formatAddress(locationResponses[index]) : '',
     }))
 
     return await processImages(formattedImages);

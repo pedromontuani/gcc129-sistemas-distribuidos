@@ -21,7 +21,7 @@ app.use(
 app.use(express.json())
 app.use(express.urlencoded({extended: true}));
 
-app.use('/', MainController);
+app.use('/summarize', MainController);
 
 app.get("/health", (_req: Request, res: Response) => {
     res.sendStatus(200);

@@ -8,7 +8,7 @@ const api = axios.create({
 
 
 export const getLocationByCoordinates = async (lat: string, lon: string) => {
-    const {data} = await api.get<LocationResponse>('/query', {
+    const {data} = await api.get<LocationResponse>('/location/query', {
         params: {
             latitude: lat,
             longitude: lon,

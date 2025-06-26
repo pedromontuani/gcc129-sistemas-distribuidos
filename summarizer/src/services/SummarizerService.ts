@@ -11,16 +11,16 @@ const api = axios.create({
 
 export const summarizeText = async (imageData: ImageData[]): Promise<string> => {
     try {
-        const formattedData = imageData.map((item, index) => `- Image ${index + 1}: tags ${item.tags.join(", ")}; categories ${item.categories.join(", ")}; address ${item.address}; timestamp ${item.timestamp || "N/A"}`).join(".\n");
+        const formattedData = imageData.map((item, index) => `- Image ${index + 1}: tags ${item.tags.join(", ")}; categories ${item.categories.join(", ")}; address ${item.address || "N/A"}; timestamp ${item.timestamp || "N/A"}`).join(".\n");
 
-        let prompt = `You are an expert in objective visual reports.
-            With the list of images, alongside with their tags, categories and address extracted from the images, 
-            generate a clear and direct report based on this data.
-            ${formattedData}.
-            Do not add information or interpretations that are not explicitly in the 
-            tags or categories provided. Describe it simply for someone who cannot see 
-            the image. Generate only the report, with no introduction or extra comments. 
-            Start directly with the report content.`;
+        let prompt = 'You are an expert in objective visual reports.'
+            + 'With the list of images, alongside with their tags, categories, address and timestamp extracted from the images,'
+            + 'generate a clear and direct report based on this data.'
+            + `${formattedData}.`
+            + 'You may add inferences and interpretations based on the provided data.'
+            + 'Describe it simply for someone who cannot see'
+            + 'the image. Generate only the report, with no introduction or extra comments.'
+            + 'Start directly with the report content.'
 
         const {data} = await api.post(
             '/api/generate',
