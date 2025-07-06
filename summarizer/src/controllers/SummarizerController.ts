@@ -1,6 +1,7 @@
 import {Request, Response, Router} from "express";
 import {ImageData} from "../types/Image";
 import {summarizeText} from "../services/SummarizerService";
+import { sendToSummarizer } from "../../../image-categorizer/src/mcp-client";
 
 // Configuração do multer para uploads em memória
 // const upload = multer({dest: "/tmp"});
@@ -110,22 +111,40 @@ const router = Router();
 // });
 
 
-router.post('/', async (req: Request, res: Response) => {
-    const data: ImageData[] = req.body;
+// router.post('/', async (req: Request, res: Response) => {
+//     const data: ImageData[] = req.body;
 
-    if (!Array.isArray(data) || data.length === 0) {
-        res.status(400).json({error: "Invalid data format. Expected an array of image data."});
-        return;
+//     if (!Array.isArray(data) || data.length === 0) {
+//         res.status(400).json({error: "Invalid data format. Expected an array of image data."});
+//         return;
+//     }
+
+//     try {
+//         const summary = await summarizeText(data);
+
+//         res.status(200).json({summary});
+//     } catch (e) {
+//         console.error("Error generating report:", e);
+//         res.status(500).json({error: "Failed to generate report."});
+//     }
+// });
+
+router.post("/", async (req: Request, res: Response) => {
+    const { images } = req.body;
+  
+    if (!images || !Array.isArray(images) || images.length === 0) {
+      return res.status(400).json({ error: "Invalid data format. Expected an array of images." });
     }
-
+  
     try {
-        const summary = await summarizeText(data);
-
-        res.status(200).json({summary});
+      const mcpResponse = await sendToSummarizer(JSON.stringify({ images }));
+      const result = JSON.parse(mcpResponse); // Resposta do summarizer deve ser JSON em string
+      res.status(200).json(result);
     } catch (e) {
-        console.error("Error generating report:", e);
-        res.status(500).json({error: "Failed to generate report."});
+      console.error("Error generating report via MCP:", e);
+      res.status(500).json({ error: "Failed to generate report via MCP." });
     }
-});
+  });
+  
 
 export default router;

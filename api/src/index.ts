@@ -3,7 +3,8 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 
-import MainController from "./controllers";
+//import MainController from "./controllers";
+import SummarizeController from "./controllers/SummarizeController";
 
 import {PORT} from "./config/env";
 
@@ -21,7 +22,8 @@ app.use(
 app.use(express.json())
 app.use(express.urlencoded({extended: true}));
 
-app.use('/summarize', MainController);
+//app.use('/summarize', MainController);
+app.use('/summarize', SummarizeController);
 
 app.get("/health", (_req: Request, res: Response) => {
     res.sendStatus(200);
