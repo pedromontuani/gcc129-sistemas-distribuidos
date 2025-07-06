@@ -28,13 +28,9 @@ app.listen(Number(PORT), "0.0.0.0", () => {
   console.log(`🚀 Summarizer Server running on port ${PORT}`);
 });
 
-// -------------- MCP SERVER INTEGRATION ---------------
-
 startMcpServer(async (payload: any) => {
-  // Espera receber { images: ImageData[] } ou apenas ImageData[]
   let images: ImageData[] | undefined;
 
-  // Aceita ambos formatos: { images: [...] } ou só o array
   if (Array.isArray(payload)) {
     images = payload as ImageData[];
   } else if (payload.images && Array.isArray(payload.images)) {
@@ -47,7 +43,6 @@ startMcpServer(async (payload: any) => {
 
   try {
     const summary = await summarizeText(images);
-    // Retorna como JSON
     return JSON.stringify({ summary });
   } catch (e) {
     console.error("Error generating report via MCP:", e);

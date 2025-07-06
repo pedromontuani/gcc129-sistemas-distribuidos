@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { generateRandomFileName } from '../helpers/Files.ts';
-import { sendToSummarizer } from '../../../image-categorizer/src/mcp-client.ts';
 
 const client = axios.create({
-  baseURL: 'http://192.168.0.119:3001',
+  baseURL: 'http://192.168.100.1:3001',
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -30,13 +29,6 @@ const client = axios.create({
 // };
 
 export const generateReport = async (images: string[]) => {
-  // Envia as imagens como JSON string
-  const payload = JSON.stringify({ images });
-  // Aguardar a resposta do summarizer via MCP (TCP)
-  const response = await sendToSummarizer(payload);
-
-  // Dependendo de como a resposta vier, talvez precise fazer JSON.parse(response)
-  // return JSON.parse(response);
-
-  return response;
+    const response = await client.post('/summarize', { images });
+  return response.data;
 };
