@@ -1,6 +1,6 @@
 ## Documentação Arquitetônica
 
-### 4.1 Visão Inicial Pré-Modelagem de Ameaças
+### Visão Inicial Pré-Modelagem de Ameaças
 
 #### Descrição Geral do Sistema
 
@@ -53,7 +53,7 @@ Nesta fase inicial, as considerações de segurança são baseadas em uma análi
 
 Esta visão inicial serve como base para a próxima etapa de modelagem de ameaças, onde essas preocupações serão aprofundadas e medidas de mitigação serão propostas. 
 
-### 4.2 Visão Final Após Implementação das Medidas de Mitigação
+### Visão Final Após Implementação das Medidas de Mitigação
 
 Após a modelagem de ameaças e a identificação de vulnerabilidades, as seguintes medidas de mitigação são propostas para fortalecer a segurança e a robustez do sistema:
 
