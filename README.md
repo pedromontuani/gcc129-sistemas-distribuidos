@@ -31,6 +31,41 @@ The relevance of the problem, scientific references and documentation of pain ar
 
 ## Quick Start
 
+### Requirements
+
+- Node.js (v18 or later)
+- Docker (for containerization)
+- npm or yarn (for package management)
+- React Native CLI (for mobile development)
+- RK3588 or similar device for RKllama execution (generative AI model)
+- Imagga API key (for image categorization)
+- Nominatim geocoding docker container (for geocoding)
+- RKLlama docker container (for summarization)
+
+### Nominatim Geocoding Setup
+
+To set up the Nominatim geocoding service, you can use the following Docker command to run it locally:
+
+```bash
+docker run -it --shm-size=1g \
+  -e PBF_URL=https://download.geofabrik.de/europe/monaco-latest.osm.pbf \ # Replace with your PBF file URL
+  -e REPLICATION_URL=https://download.geofabrik.de/europe/monaco-updates/ \ # Replace with your replication URL
+  -e IMPORT_WIKIPEDIA=false \
+  -e NOMINATIM_PASSWORD=very_secure_password \
+  -v nominatim-data:/var/lib/postgresql/16/main \
+  -p 8080:8080 \
+  --name nominatim \
+  mediagis/nominatim:5.1
+```
+
+### RKLlama Setup
+
+To set up the RKLlama service for summarization, you can use the following Docker command to run it locally:
+
+```bash
+docker run -it --privileged --restart=unless-stopped -p 8080:8080 ghcr.io/notpunchnox/rkllama:main
+```
+
 ### Development
 
 To start the microservices and frontend in development environment:
