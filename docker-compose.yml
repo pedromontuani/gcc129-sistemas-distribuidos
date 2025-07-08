@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   api:
-    build: ./api
+    build: image-categorizer
     ports:
       - "3001:3001"
     environment:
@@ -10,18 +10,18 @@ services:
       - PORT=3001
       - FRONTEND_URL=http://localhost:3000
     volumes:
-      - ./api:/app
+      - ./image-categorizer:/app
       - /app/node_modules
     command: npm run dev
 
   summarizer:
     build: ./summarizer
     ports:
-      - "3002:3001"  # Porta 3002 do HOST para 3001 do CONTAINER
+      - "3002:3001"  
     environment:
       - NODE_ENV=development
       - PORT=3001     # O app roda na 3001 DENTRO do container, mas fora é 3002
-      - OPENROUTER_API_URL=https://openrouter.ai/api/v1/chat/completions
+      - OPENROUTER_API_URL=https://openrouter.ai/image-categorizer/v1/chat/completions
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
     volumes:
       - ./summarizer:/app

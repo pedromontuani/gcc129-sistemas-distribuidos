@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: api
+  name: image-categorizer
 spec:
   selector:
-    app: api
+    app: image-categorizer
   ports:
     - protocol: TCP
       port: 3001         # Porta interna do serviço (ClusterIP)
@@ -29,41 +29,41 @@ spec:
         app: summarizer
     spec:
       containers:
-      - name: summarizer
-        image: summarizer:latest
-        imagePullPolicy: Never     
-        ports:
-        - containerPort: 3002
-        env:
-        - name: PORT
-          value: "3002"
-        - name: NODE_ENV
-          value: "production"
-        - name: API_URL
-          value: "http://api:3001/test"
-        - name: OPENROUTER_API_URL
-          value: "https://openrouter.ai/api/v1/chat/completions"
-        - name: OPENROUTER_API_KEY
-          value: "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"
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "200m"
-          limits:
-            memory: "512Mi"
-            cpu: "400m"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 3002
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 3002
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: summarizer
+          image: summarizer:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3002
+          env:
+            - name: PORT
+              value: "3002"
+            - name: NODE_ENV
+              value: "production"
+            - name: API_URL
+              value: "http://api:3001/test"
+            - name: OPENROUTER_API_URL
+              value: "https://openrouter.ai/api/v1/chat/completions"
+            - name: OPENROUTER_API_KEY
+              value: "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"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "400m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+            initialDelaySeconds: 5
+            periodSeconds: 5
 ---
 apiVersion: v1
 kind: Service
